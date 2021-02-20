@@ -1,0 +1,45 @@
+﻿@page "/"
+@using OrienteeringPlanner.Models;
+@using OrienteeringPlanner.Services;
+@using System.Net.Http;
+@using System.Net.Http.Json;
+
+@inject IJSRuntime JSRuntime
+
+
+<div id="map" style='width: 100%; height: 100%;'></div>
+
+
+@code
+{
+    private IEnumerable<Run> upcomingRuns { get; set; } = new List<Run>();
+
+    [Inject]
+    public IRunService RunService { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        // GetUpcomingRuns();
+        upcomingRuns = (await RunService.GetUpcomingRuns()).ToList();
+
+        //await JSRuntime.InvokeVoidAsync("RenderMapboxComponent", upcomingRuns);
+
+        return;
+
+    }
+
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    upcomingRuns = (await RunService.GetUpcomingRuns()).ToList();
+
+    //    await JSRuntime.InvokeVoidAsync("RenderMapboxComponent", upcomingRuns);
+
+    //}
+
+    protected async Task GetUpcomingRuns()
+    {
+        HttpClient http = new HttpClient();
+        upcomingRuns = await http.GetFromJsonAsync<IEnumerable<Run>>("api/runs/GetUpcomingRuns");
+    }
+
+}
