@@ -1,8 +1,64 @@
 ﻿@page "/login"
 @using OrienteeringPlanner.Models
+@using OrienteeringPlanner.Services
 
+<div class="container mt-5">
+    @if (!loggedIn)
+    {
+        <h1>Login</h1>
+        <EditForm Model="@club" OnValidSubmit="@LoginAsync">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group">
+                <label for="LoginInputEmail">Email address</label>
+                <InputText @bind-Value="club.Email" type="email" class="form-control" id="LoginInputEmail" aria-describedby="emailHelp" placeholder="Enter email" />
+            </div>
+            <div class="form-group">
+                <label for="LoginInputPassword">Password</label>
+                <InputText @bind-Value="club.Password" type="password" class="form-control" id="LoginInputPassword" placeholder="Password" />
+            </div>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </EditForm>
+    }
+    else
+    {
+        <h1>Create new run</h1>
+        <EditForm Model="@run" OnValidSubmit="@CreateRun">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div class="form-group">
+                <label for="RunInputName">Map name</label>
+                <InputText @bind-Value="run.Name" type="text" class="form-control" id="RunInputName" aria-describedby="nameHelp" placeholder="Enter name of map" />
+            </div>
+            <div class="form-group">
+                <label for="RunInputStartDateTime">Start date and time</label>
+                <input @bind="run.StartDateTime" @bind:format="yyyy-MM-ddThh:mm" type="datetime-local" class="form-control" id="RunInputStartDateTime" placeholder="Start date and time for run">
+            </div>
+            <div class="form-group">
+                <label for="RunInputEndDateTime">End date and time</label>
+                <input @bind="run.EndDateTime" @bind:format="yyyy-MM-ddThh:mm" type="datetime-local" class="form-control" id="RunInputEndDateTime" placeholder="End date and time for run">
+            </div>
+            <button type="submit" class="btn btn-primary">Create Run</button>
+        </EditForm>
+    }
+</div>
 @code {
 
-    private Club club;
+    private Club club = new Club();
+    private Run run = new Run();
+    private bool loggedIn = false;
+
+    [Inject]
+    public IRunService RunService { get; set; }
+
+    private void LoginAsync()
+    {
+        loggedIn = true;
+    }
+
+    private void CreateRun()
+    {
+        var newRun = RunService.CreateRun(run);
+    }
 
 }

@@ -9,6 +9,7 @@ namespace OrienteeringPlanner.Services
     public interface IRunService
     {
         Task<IEnumerable<Run>> GetUpcomingRuns();
+        Task<Run> CreateRun(Run run);
 
     }
 }

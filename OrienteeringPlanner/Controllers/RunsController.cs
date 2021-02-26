@@ -40,13 +40,18 @@ namespace OrienteeringPlanner.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Run>> GetRun(int runId)
         {
-            return new Run();
+            return await _context.Run.FindAsync(runId);
         }
 
         // POST api/<RunsController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpPost("CreateRun")]
+        public async Task<ActionResult<Run>> CreateRun(Run run)
         {
+            var newRun = await _context.Run.AddAsync(run);
+            await _context.SaveChangesAsync();
+
+            return newRun.Entity;
+
         }
 
         // PUT api/<RunsController>/5
