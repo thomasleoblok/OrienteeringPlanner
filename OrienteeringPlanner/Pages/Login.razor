@@ -2,20 +2,22 @@
 @using OrienteeringPlanner.Models
 @using OrienteeringPlanner.Services
 
+@inject IClubService clubservice
+
 <div class="container mt-5">
-    @if (!loggedIn)
+    @if (!loggedIn && club.Token.ToString() != "")
     {
         <h1>Login</h1>
-        <EditForm Model="@club" OnValidSubmit="@LoginAsync">
+        <EditForm Model="@loginRequest" OnValidSubmit="@ClubLoginAsync">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="form-group">
                 <label for="LoginInputEmail">Email address</label>
-                <InputText @bind-Value="club.Email" type="email" class="form-control" id="LoginInputEmail" aria-describedby="emailHelp" placeholder="Enter email" />
+                <InputText @bind-Value="loginRequest.Email" type="email" class="form-control" id="LoginInputEmail" aria-describedby="emailHelp" placeholder="Enter email" />
             </div>
             <div class="form-group">
                 <label for="LoginInputPassword">Password</label>
-                <InputText @bind-Value="club.Password" type="password" class="form-control" id="LoginInputPassword" placeholder="Password" />
+                <InputText @bind-Value="loginRequest.Password" type="password" class="form-control" id="LoginInputPassword" placeholder="Password" />
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
         </EditForm>
@@ -45,20 +47,33 @@
 @code {
 
     private Club club = new Club();
+    private LoginRequest loginRequest = new LoginRequest();
     private Run run = new Run();
     private bool loggedIn = false;
 
     [Inject]
     public IRunService RunService { get; set; }
 
-    private void LoginAsync()
+    private async void ClubLoginAsync()
     {
-        loggedIn = true;
+        if (!string.IsNullOrEmpty(loginRequest.Email) && !string.IsNullOrEmpty(loginRequest.Password))
+        {
+            var response = await clubservice.ClubLogin(loginRequest);
+
+            if (response != null)
+            {
+                club = response;
+                loggedIn = true;
+            }
+        }
     }
 
-    private void CreateRun()
+    private async void CreateRun()
     {
-        var newRun = RunService.CreateRun(run);
+        if (!loggedIn && club.Token.ToString() != "")
+        {
+            var responseMessage = await RunService.CreateRun(run, club);
+        }
     }
 
 }

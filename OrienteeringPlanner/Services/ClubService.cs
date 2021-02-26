@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Components;
 
 namespace OrienteeringPlanner.Services
 {
@@ -21,10 +22,10 @@ namespace OrienteeringPlanner.Services
             _httpClient = httpClient;
         }
 
-        public async Task<Club> LoginAsync(Club club)
+        public async Task<Club> ClubLogin(LoginRequest loginRequest)
         {
             //club.Password = Utility.Encrypt(club.Password);
-            string serializedClub = JsonConvert.SerializeObject(club);
+            string serializedClub = JsonConvert.SerializeObject(loginRequest);
 
             var requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/Clubs/Login");
             requestMessage.Content = new StringContent(serializedClub);
@@ -40,6 +41,11 @@ namespace OrienteeringPlanner.Services
 
             return await Task.FromResult(returnedClub);
 
+        }
+
+        public async Task<bool> ValidClubCredidentials(Club club)
+        {
+            return await _httpClient.SendJsonAsync<bool>(HttpMethod.Get, "/api/Clubs/ValidClubCredidentials", club);
         }
 
     }

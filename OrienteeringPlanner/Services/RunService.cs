@@ -19,6 +19,7 @@ namespace OrienteeringPlanner.Services
     public class RunService : IRunService
     {
         private readonly HttpClient httpClient;
+        private readonly IClubService clubService; 
 
         public RunService(HttpClient httpClient)
         {
@@ -30,11 +31,20 @@ namespace OrienteeringPlanner.Services
         {
             return await httpClient.GetJsonAsync<IEnumerable<Run>>("/api/runs/GetUpcomingRuns");
         }
-        public async Task<Run> CreateRun(Run run)
+        public async Task<HttpResponseMessage> CreateRun(Run run, Club club)
         {
-            var response = await httpClient.PostAsJsonAsync("api/runs/CreateRun", run);
+            HttpResponseMessage responseMessage = new HttpResponseMessage();
 
-            return null;
+            if (await clubService.ValidClubCredidentials(club)){
+                responseMessage = await httpClient.PostAsJsonAsync("api/runs/CreateRun", run);
+            }
+            else
+            {
+                responseMessage.StatusCode = (System.Net.HttpStatusCode)500;
+            }
+
+            return responseMessage;
+
         }
 
     }

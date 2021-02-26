@@ -9,7 +9,8 @@ namespace OrienteeringPlanner.Services
 {
     public interface IClubService
     {
-        public Task<Club> LoginAsync(Club club);
+        public Task<Club> ClubLogin(LoginRequest loginRequest);
+        public Task<bool> ValidClubCredidentials(Club club);
 
     }
 }

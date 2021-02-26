@@ -25,11 +25,9 @@ namespace OrienteeringPlanner.Controllers
         }
 
         [HttpGet("Login")]
-        public async Task<ActionResult<Club>> Login(Club club)
+        public async Task<ActionResult<Club>> Login(LoginRequest loginRequest)
         {
-            var today = DateTime.Now;
-
-            var returnedClub = await _context.Club.FindAsync(1);
+            var returnedClub = await _context.Club.FirstAsync(club => club.Email == loginRequest.Email && club.Password == loginRequest.Password);
 
             return returnedClub;
         }
