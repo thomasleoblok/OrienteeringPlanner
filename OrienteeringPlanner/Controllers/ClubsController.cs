@@ -27,9 +27,16 @@ namespace OrienteeringPlanner.Controllers
         [HttpGet("Login")]
         public async Task<ActionResult<Club>> Login(LoginRequest loginRequest)
         {
-            var returnedClub = await _context.Club.FirstAsync(club => club.Email == loginRequest.Email && club.Password == loginRequest.Password);
+            try
+            {
+                 return await _context.Club.FirstOrDefaultAsync(club => club.Email == loginRequest.Email && club.Password == loginRequest.Password);
+            }
+            catch (Exception ex)
+            {
 
-            return returnedClub;
+                throw;
+            }
+
         }
 
     }

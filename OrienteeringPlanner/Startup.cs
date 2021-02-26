@@ -30,6 +30,8 @@ namespace OrienteeringPlanner
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddScoped<IClubService, ClubService>();
+            services.AddScoped<IRunService, RunService>();
 
             services.AddHttpClient<IRunService, RunService>(client =>
             {

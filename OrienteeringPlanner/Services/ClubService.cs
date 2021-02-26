@@ -20,32 +20,28 @@ namespace OrienteeringPlanner.Services
         public ClubService(HttpClient httpClient)
         {
             _httpClient = httpClient;
+            _httpClient.BaseAddress = new Uri("http://localhost:65419/");
         }
 
         public async Task<Club> ClubLogin(LoginRequest loginRequest)
         {
-            //club.Password = Utility.Encrypt(club.Password);
-            string serializedClub = JsonConvert.SerializeObject(loginRequest);
+            try
+            {
+                var response = await _httpClient.SendJsonAsync<Club>(HttpMethod.Get, "api/Clubs/Login", loginRequest);
 
-            var requestMessage = new HttpRequestMessage(HttpMethod.Post, "api/Clubs/Login");
-            requestMessage.Content = new StringContent(serializedClub);
+                return response;
 
-            requestMessage.Content.Headers.ContentType
-                = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+            }
+            catch (Exception ex)
+            {
 
-            var response = await _httpClient.SendAsync(requestMessage);
-
-            var responseBody = await response.Content.ReadAsStringAsync();
-
-            var returnedClub = JsonConvert.DeserializeObject<Club>(responseBody);
-
-            return await Task.FromResult(returnedClub);
-
+                throw;
+            }
         }
 
         public async Task<bool> ValidClubCredidentials(Club club)
         {
-            return await _httpClient.SendJsonAsync<bool>(HttpMethod.Get, "/api/Clubs/ValidClubCredidentials", club);
+            return await _httpClient.SendJsonAsync<bool>(HttpMethod.Get, "api/Clubs/ValidClubCredidentials", club);
         }
 
     }

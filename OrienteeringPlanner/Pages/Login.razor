@@ -2,7 +2,8 @@
 @using OrienteeringPlanner.Models
 @using OrienteeringPlanner.Services
 
-@inject IClubService clubservice
+@inject IClubService clubService
+@inject IRunService runService
 
 <div class="container mt-5">
     @if (!loggedIn && club.Token.ToString() != "")
@@ -51,18 +52,15 @@
     private Run run = new Run();
     private bool loggedIn = false;
 
-    [Inject]
-    public IRunService RunService { get; set; }
-
     private async void ClubLoginAsync()
     {
         if (!string.IsNullOrEmpty(loginRequest.Email) && !string.IsNullOrEmpty(loginRequest.Password))
         {
-            var response = await clubservice.ClubLogin(loginRequest);
+            var response = await clubService.ClubLogin(loginRequest);
 
             if (response != null)
             {
-                club = response;
+                club =  response;
                 loggedIn = true;
             }
         }
@@ -72,7 +70,7 @@
     {
         if (!loggedIn && club.Token.ToString() != "")
         {
-            var responseMessage = await RunService.CreateRun(run, club);
+            var responseMessage = await runService.CreateRun(run, club);
         }
     }
 
