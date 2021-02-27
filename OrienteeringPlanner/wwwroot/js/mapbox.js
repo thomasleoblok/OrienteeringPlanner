@@ -7,7 +7,7 @@ function RenderMapboxComponent(upcomingRuns) {
     var map = new mapboxgl.Map({
         accessToken: accessToken,
         container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v11',
+        style: 'mapbox://styles/thomasblok98/ckl6xv0gg19mk17s11nhdraet',
         zoom: getZoom(),
         center: getLngLat()
     });
