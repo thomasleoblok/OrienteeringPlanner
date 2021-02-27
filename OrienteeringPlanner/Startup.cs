@@ -30,10 +30,17 @@ namespace OrienteeringPlanner
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddHttpClient();
+
             services.AddScoped<IClubService, ClubService>();
             services.AddScoped<IRunService, RunService>();
 
             services.AddHttpClient<IRunService, RunService>(client =>
+            {
+                client.BaseAddress = new Uri(Configuration.GetValue<string>("BaseAddress"));
+            });
+
+            services.AddHttpClient<IClubService, ClubService>(client =>
             {
                 client.BaseAddress = new Uri(Configuration.GetValue<string>("BaseAddress"));
             });

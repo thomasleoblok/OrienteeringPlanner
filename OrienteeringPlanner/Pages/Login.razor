@@ -6,7 +6,7 @@
 @inject IRunService runService
 
 <div class="container mt-5">
-    @if (!loggedIn && club.Token.ToString() != "")
+    @if (!loggedIn && club != null)
     {
         <h1>Login</h1>
         <EditForm Model="@loginRequest" OnValidSubmit="@ClubLoginAsync">
@@ -62,13 +62,14 @@
             {
                 club =  response;
                 loggedIn = true;
+                StateHasChanged();
             }
         }
     }
 
     private async void CreateRun()
     {
-        if (!loggedIn && club.Token.ToString() != "")
+        if (loggedIn && club != null)
         {
             var responseMessage = await runService.CreateRun(run, club);
         }

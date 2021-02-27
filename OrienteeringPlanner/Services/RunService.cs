@@ -18,25 +18,29 @@ namespace OrienteeringPlanner.Services
 {
     public class RunService : IRunService
     {
-        private readonly HttpClient httpClient;
-        private readonly IClubService clubService; 
+        private HttpClient _httpClient { get; }
+        private IClubService _clubService { get; } 
 
         public RunService(HttpClient httpClient)
         {
-            this.httpClient = httpClient;
-            this.httpClient.BaseAddress = new Uri("http://localhost:65419/");
+            _httpClient = httpClient;
+            _clubService = new ClubService(_httpClient);
         }
 
         public async Task<IEnumerable<Run>> GetUpcomingRuns()
         {
-            return await httpClient.GetJsonAsync<IEnumerable<Run>>("/api/runs/GetUpcomingRuns");
+            return await _httpClient.GetJsonAsync<IEnumerable<Run>>("api/runs/GetUpcomingRuns");
         }
+
         public async Task<HttpResponseMessage> CreateRun(Run run, Club club)
         {
             HttpResponseMessage responseMessage = new HttpResponseMessage();
 
-            if (await clubService.ValidClubCredidentials(club)){
-                responseMessage = await httpClient.PostAsJsonAsync("api/runs/CreateRun", run);
+            var isValidClub = await _clubService.ValidClubCredidentials(club);
+
+            if (isValidClub)
+            {
+                responseMessage = await _httpClient.PostAsJsonAsync("api/runs/CreateRun", run);
             }
             else
             {

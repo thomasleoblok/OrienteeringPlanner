@@ -10,6 +10,10 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Components;
+using Newtonsoft.Json;
+using System.Text;
+using System.Net;
+using System.Net.Http.Formatting;
 
 namespace OrienteeringPlanner.Services
 {
@@ -20,17 +24,25 @@ namespace OrienteeringPlanner.Services
         public ClubService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _httpClient.BaseAddress = new Uri("http://localhost:65419/");
         }
 
         public async Task<Club> ClubLogin(LoginRequest loginRequest)
         {
             try
             {
-                var response = await _httpClient.SendJsonAsync<Club>(HttpMethod.Get, "api/Clubs/Login", loginRequest);
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "api/Clubs/Login");
+                request.Content = new StringContent(JsonConvert.SerializeObject(loginRequest), Encoding.UTF8, "application/json");
 
-                return response;
+                var response = await _httpClient.SendAsync(request);
 
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return await response.Content.ReadAsAsync<Club>(new[] { new JsonMediaTypeFormatter() });
+                }
+                else
+                {
+                    return null;
+                }
             }
             catch (Exception ex)
             {
@@ -41,7 +53,26 @@ namespace OrienteeringPlanner.Services
 
         public async Task<bool> ValidClubCredidentials(Club club)
         {
-            return await _httpClient.SendJsonAsync<bool>(HttpMethod.Get, "api/Clubs/ValidClubCredidentials", club);
+            try
+            {
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "api/Clubs/ValidClubCredidentials");
+                request.Content = new StringContent(JsonConvert.SerializeObject(club), Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.SendAsync(request);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return await response.Content.ReadAsAsync<bool>(new[] { new JsonMediaTypeFormatter() });
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
 
     }

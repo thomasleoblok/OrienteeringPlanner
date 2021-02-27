@@ -29,12 +29,39 @@ namespace OrienteeringPlanner.Controllers
         {
             try
             {
-                 return await _context.Club.FirstOrDefaultAsync(club => club.Email == loginRequest.Email && club.Password == loginRequest.Password);
+                var club = await _context.Club.Where(club => club.Email == loginRequest.Email && club.Password == loginRequest.Password).FirstOrDefaultAsync();
+
+                club.Password = "";
+
+                return club;
             }
             catch (Exception ex)
             {
 
                 throw;
+            }
+
+        }
+
+        [HttpGet("ValidClubCredidentials")]
+        public async Task<ActionResult<bool>> ValidClubCredidentials(Club club)
+        {
+            try
+            {
+                var dbClub = await _context.Club.FindAsync(club.Id);
+
+                if (dbClub.Token == club.Token)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
             }
 
         }
