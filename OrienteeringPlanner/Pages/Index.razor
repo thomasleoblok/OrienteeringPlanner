@@ -28,14 +28,6 @@
 
     }
 
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    upcomingRuns = (await RunService.GetUpcomingRuns()).ToList();
-
-    //    await JSRuntime.InvokeVoidAsync("RenderMapboxComponent", upcomingRuns);
-
-    //}
-
     protected async Task GetUpcomingRuns()
     {
         HttpClient http = new HttpClient();

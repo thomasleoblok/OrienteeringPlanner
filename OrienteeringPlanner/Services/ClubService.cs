@@ -10,7 +10,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Components;
-using Newtonsoft.Json;
 using System.Text;
 using System.Net;
 using System.Net.Http.Formatting;

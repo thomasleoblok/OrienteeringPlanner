@@ -209,3 +209,11 @@ app {
     display: inline-block;
     bottom: 0;
 }
+
+.popUpBox {
+    color: black;
+}
+
+    .popUpBox a {
+        color: #0073dc;
+    }
