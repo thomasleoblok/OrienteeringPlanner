@@ -10,7 +10,7 @@ namespace OrienteeringPlanner.Services
 {
     public interface IRunService
     {
-        Task<IEnumerable<Run>> GetUpcomingRuns();
+        Task<IEnumerable<Run>> GetUpcomingRuns(int searchDaysAhead);
         Task<HttpResponseMessage> CreateRun(Run run, Club club);
 
     }

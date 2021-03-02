@@ -27,9 +27,9 @@ namespace OrienteeringPlanner.Services
             _clubService = new ClubService(_httpClient);
         }
 
-        public async Task<IEnumerable<Run>> GetUpcomingRuns()
+        public async Task<IEnumerable<Run>> GetUpcomingRuns(int searchDaysAhead)
         {
-            return await _httpClient.GetJsonAsync<IEnumerable<Run>>("api/runs/GetUpcomingRuns");
+            return await _httpClient.GetJsonAsync<IEnumerable<Run>>("api/runs/GetUpcomingRuns/" + searchDaysAhead.ToString());
         }
 
         public async Task<HttpResponseMessage> CreateRun(Run run, Club club)

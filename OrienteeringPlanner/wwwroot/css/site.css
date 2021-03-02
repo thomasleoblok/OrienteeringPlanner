@@ -217,3 +217,10 @@ app {
     .popUpBox a {
         color: #0073dc;
     }
+
+.searchSpanDiv {
+    padding: 10px 10px 10px 10px;
+    position: fixed;
+    z-index: 1;
+    background: #303466;
+}

@@ -25,13 +25,14 @@ namespace OrienteeringPlanner.Controllers
         }
 
         // GET: api/Runs/GetUpcomingRuns
-        [HttpGet("GetUpcomingRuns")]
-        public async Task<ActionResult<IEnumerable<Run>>> GetUpcomingRuns()
+        [HttpGet("GetUpcomingRuns/{searchDaysAhead}")]
+        public async Task<ActionResult<IEnumerable<Run>>> GetUpcomingRuns(int searchDaysAhead)
         {
             var today = DateTime.Now;
+            var searchSpanDate = today.AddDays(searchDaysAhead);
 
             //var upcomingRuns = await _context.Run.Where(run => run.StartDateTime > today && run.EndDateTime < today.AddDays(7)).ToListAsync();
-            var upcomingRuns = await _context.Run.Where(s => s.Id > 0).ToListAsync();
+            var upcomingRuns = await _context.Run.Where(run => run.StartDateTime > today && run.StartDateTime < searchSpanDate).ToListAsync();
 
             return upcomingRuns;
         }
