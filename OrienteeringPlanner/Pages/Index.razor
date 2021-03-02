@@ -21,12 +21,8 @@
     private IEnumerable<Run> upcomingRuns { get; set; } = new List<Run>();
     private int searchSpan { get; set; } = 7;
 
-    [Inject]
-    public IRunService RunService { get; set; }
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        //GetUpcomingRuns();
         upcomingRuns = (await runService.GetUpcomingRuns(searchSpan)).ToList();
 
         await JSRuntime.InvokeVoidAsync("RenderMapboxComponent", upcomingRuns);
@@ -34,14 +30,6 @@
         return;
 
     }
-
-    protected async Task GetUpcomingRuns()
-    {
-        HttpClient http = new HttpClient();
-        upcomingRuns = await http.GetFromJsonAsync<IEnumerable<Run>>("api/runs/GetUpcomingRuns");
-    }
-
-
 
     public async void ChangeSearchSpan(string range)
     {
