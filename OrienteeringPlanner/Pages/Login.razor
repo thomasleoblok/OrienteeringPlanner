@@ -7,6 +7,14 @@
 @inject IRunService runService
 @inject IJSRuntime JSRuntime
 
+
+<OrienteeringPlanner.Shared.Modal @ref="Modal">
+    <Title>@ModalTitle</Title>
+    <Body>
+        @ModalBody
+    </Body>
+</OrienteeringPlanner.Shared.Modal>
+
 <div class="container pb-3" style="height: 0%;">
     @if (!loggedIn && club != null)
     {
@@ -84,6 +92,10 @@
     private bool loginLoading = false;
     private bool createRunLoading = false;
 
+    private OrienteeringPlanner.Shared.Modal Modal { get; set; }
+    private string ModalTitle { get; set; }
+    private string ModalBody { get; set; }
+    private string ModalColor { get; set; }
 
     protected override void OnInitialized()
     {
@@ -127,9 +139,20 @@
                 await JSRuntime.InvokeVoidAsync("ResetFormDate", "");
                 run = new Run();
                 SetRunDateTimes();
+
+                ModalTitle = "Run has been created";
+                ModalBody = "Your run has been created successfully!";
+                Modal.UpdateColor("green");
+            }
+            else
+            {
+                ModalTitle = "Error";
+                ModalBody = "Your run has not been created! Please try again.";
+                Modal.UpdateColor("red");
             }
         }
         createRunLoading = true;
+        Modal.Open();
     }
 
     private void SetRunDateTimes()
