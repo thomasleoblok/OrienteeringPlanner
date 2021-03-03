@@ -19,7 +19,7 @@
     @if (!loggedIn && club != null)
     {
         <h1 class="mt-5">Login</h1>
-        <EditForm Model="@loginRequest" OnValidSubmit="@ClubLoginAsync">
+        <EditForm Model="@loginRequest" OnValidSubmit="@ClubLoginAsync" class="pr-5">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="form-group">
@@ -46,7 +46,7 @@
     else
     {
         <h1 class="mt-5">Create new run</h1>
-        <EditForm Model="@run" OnValidSubmit="@CreateRun" id="createRunForm">
+        <EditForm Model="@run" OnValidSubmit="@CreateRun" id="createRunForm" class="pr-4">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div class="form-group">
@@ -124,7 +124,7 @@
                     );
                     Modal.changePasswordRequest.ClubToken = club.ClubData.Token;
                     Modal.changePasswordRequest.ClubId = club.ClubData.Id;
-                    Modal.ChangePasswordForm();
+                    Modal.ShowChangePasswordForm();
                 }
 
                 StateHasChanged();
@@ -158,6 +158,8 @@
 
     private async void CreateRun()
     {
+        Modal.HideChangePasswordForm(); // Always hide change password form
+
         createRunLoading = true;
         if (loggedIn && club != null)
         {

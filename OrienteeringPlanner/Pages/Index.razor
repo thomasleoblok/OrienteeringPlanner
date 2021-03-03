@@ -23,9 +23,9 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        //upcomingRuns = (await runService.GetUpcomingRuns(searchSpan)).ToList();
+        upcomingRuns = (await runService.GetUpcomingRuns(searchSpan)).ToList();
 
-        //await JSRuntime.InvokeVoidAsync("RenderMapboxComponent", upcomingRuns);
+        await JSRuntime.InvokeVoidAsync("RenderMapboxComponent", upcomingRuns);
 
         return;
 

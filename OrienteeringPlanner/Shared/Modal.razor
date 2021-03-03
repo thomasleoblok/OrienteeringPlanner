@@ -92,9 +92,14 @@
         TitleColor = color;
     }
 
-    public void ChangePasswordForm()
+    public void ShowChangePasswordForm()
     {
         ShowUpdatePasswordForm = true;
+    }
+
+    public void HideChangePasswordForm()
+    {
+        ShowUpdatePasswordForm = false;
     }
 
     public async void ChangePasswordAsync()
