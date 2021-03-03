@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using OrienteeringPlanner.Services;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -29,16 +30,22 @@ namespace OrienteeringPlanner.Controllers
         {
             try
             {
-                var club = await _context.Club.Where(club => club.Email == loginRequest.Email && club.Password == loginRequest.Password).FirstOrDefaultAsync();
+                var club = await _context.Club.Where(club =>
+                    club.Email == EncryptionDecryptionService.Encrypt(loginRequest.Email) &&
+                    club.Password == EncryptionDecryptionService.Encrypt(loginRequest.Password)
+                    ).FirstOrDefaultAsync();
 
-                club.Password = "";
+                if (club != null)
+                {
+                    club.Password = "";
+                    club.Email = loginRequest.Email;
+                }
 
                 return club;
             }
             catch (Exception ex)
             {
-
-                throw;
+                return null;
             }
 
         }

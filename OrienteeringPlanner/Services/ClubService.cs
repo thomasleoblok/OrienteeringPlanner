@@ -45,8 +45,7 @@ namespace OrienteeringPlanner.Services
             }
             catch (Exception ex)
             {
-
-                throw;
+                return null;
             }
         }
 
