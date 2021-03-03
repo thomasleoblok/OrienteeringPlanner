@@ -16,6 +16,7 @@ namespace OrienteeringPlanner.Data
 
         public DbSet<Run> Run { get; set; }
         public DbSet<Club> Club { get; set; }
+        public DbSet<ClubExtended> ClubExtended { get; set; }
 
 
     }

@@ -26,7 +26,7 @@ namespace OrienteeringPlanner.Controllers
         }
 
         [HttpGet("Login")]
-        public async Task<ActionResult<Club>> Login(LoginRequest loginRequest)
+        public async Task<ActionResult<ClubWithExtendedData>> Login(LoginRequest loginRequest)
         {
             try
             {
@@ -37,11 +37,34 @@ namespace OrienteeringPlanner.Controllers
 
                 if (club != null)
                 {
+                    var clubExtended = await _context.ClubExtended.Where(ce => ce.ClubId == club.Id).FirstOrDefaultAsync();
+                    
+                    try
+                    {
+                        if (clubExtended.FirstTimeLogin)
+                        {
+                            clubExtended.FirstTimeLogin = false;
+                            _context.Entry(clubExtended).State = EntityState.Modified;
+                            await _context.SaveChangesAsync();
+                        }
+                    }
+                    catch { }
+
                     club.Password = "";
                     club.Email = loginRequest.Email;
-                }
 
-                return club;
+                    var clubWithExtendedData = new ClubWithExtendedData
+                    {
+                        ClubData = club,
+                        ExtendedData = clubExtended
+                    };
+
+                    return clubWithExtendedData;
+                }
+                else
+                {
+                    return null;
+                }
             }
             catch (Exception ex)
             {
@@ -73,5 +96,40 @@ namespace OrienteeringPlanner.Controllers
 
         }
 
+        [HttpGet("ChangeClubPassword")]
+        public async Task<ActionResult<bool>> ChangeClubPassword(ChangePasswordRequest request)
+        {
+            try
+            {
+                var dbClub = await _context.Club.FindAsync(request.ClubId);
+
+                if (dbClub.Token == request.ClubToken)
+                {
+                    dbClub.Password = EncryptionDecryptionService.Encrypt(request.NewPassword);
+                    _context.Entry(dbClub).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+
+                    var dbClubExtended = await _context.ClubExtended.Where(ce => ce.ClubId == request.ClubId).FirstOrDefaultAsync();
+
+                    if(dbClubExtended != null)
+                    {
+                        dbClubExtended.HasChangedPassword = true;
+                        _context.Entry(dbClubExtended).State = EntityState.Modified;
+                        await _context.SaveChangesAsync();
+                    }
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
     }
 }
