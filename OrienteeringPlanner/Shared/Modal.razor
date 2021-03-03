@@ -1,4 +1,6 @@
-﻿<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+﻿@inject IClubService clubService
+
+<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,6 +11,31 @@
             </div>
             <div class="modal-body" style="color: black">
                 <h5>@Body</h5>
+
+                @if (ShowUpdatePasswordForm)
+                {
+                    <EditForm Model="@changePasswordRequest" OnValidSubmit="@ChangePasswordAsync">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary />
+                        <div class="form-group">
+                            <label for="ChangePasswordInputNewPassword">New Password</label>
+                            <InputText @bind-Value="changePasswordRequest.NewPassword" type="password" class="form-control" id="ChangePasswordInputNewPassword" aria-describedby="newPasswordHelp" placeholder="****" requried />
+                            <i style="color:red;">Password must be 5 or more characters long!</i>
+                        </div>
+                        @if (!loading)
+                        {
+                            <button type="submit" class="btn btn-info">Change Password</button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-info" type="button" disabled>
+                                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                                Loading...
+                            </button>
+                        }
+                    </EditForm>
+                }
+
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Close</button>
@@ -32,6 +59,11 @@
     public RenderFragment Body { get; set; }
 
     private string TitleColor = "";
+    private bool loading = false;
+
+    private bool ShowUpdatePasswordForm = false;
+    public OrienteeringPlanner.Models.ChangePasswordRequest changePasswordRequest = new OrienteeringPlanner.Models.ChangePasswordRequest();
+
 
 
     public Guid Guid = Guid.NewGuid();
@@ -59,4 +91,28 @@
     {
         TitleColor = color;
     }
+
+    public void ChangePasswordForm()
+    {
+        ShowUpdatePasswordForm = true;
+    }
+
+    public async void ChangePasswordAsync()
+    {
+        if (!string.IsNullOrEmpty(changePasswordRequest.NewPassword) && changePasswordRequest.NewPassword.Length > 5)
+        {
+            loading = true;
+            var response = await clubService.ChangeClubPassword(changePasswordRequest);
+
+            if (response)
+            {
+                this.Close();
+                StateHasChanged();
+            }
+        }
+        loading = false;
+
+    }
+
+
 }

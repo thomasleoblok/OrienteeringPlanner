@@ -36,7 +36,7 @@
             }
             else
             {
-                <button class="btn btn-primary" type="button" disabled>
+                <button class="btn btn-info" type="button" disabled>
                     <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
                     Loading...
                 </button>
@@ -85,7 +85,7 @@
 
 @code {
 
-    private Club club = new Club();
+    private ClubWithExtendedData club = new ClubWithExtendedData();
     private LoginRequest loginRequest = new LoginRequest();
     private Run run = new Run();
     private bool loggedIn = false;
@@ -105,54 +105,95 @@
 
     private async void ClubLoginAsync()
     {
-        loginLoading = true;
         if (!string.IsNullOrEmpty(loginRequest.Email) && !string.IsNullOrEmpty(loginRequest.Password))
         {
+            loginLoading = true;
             var response = await clubService.ClubLogin(loginRequest);
 
             if (response != null)
             {
                 club = response;
                 loggedIn = true;
+
+                if (!club.ExtendedData.HasChangedPassword)
+                {
+                    ChangeModalDataAndShow(
+                        "Remember to update your password",
+                        "You have to update your password. Change it below:",
+                        "black"
+                    );
+                    Modal.changePasswordRequest.ClubToken = club.ClubData.Token;
+                    Modal.changePasswordRequest.ClubId = club.ClubData.Id;
+                    Modal.ChangePasswordForm();
+                }
+
                 StateHasChanged();
                 await JSRuntime.InvokeVoidAsync("RenderCreateRunMapboxComponent", "");
             }
+            else
+            {
+                ChangeModalDataAndShow(
+                    "Something went wrong",
+                    "There were some problems when trying to login. Please try again.",
+                    "red"
+                );
+
+                loginLoading = false;
+                StateHasChanged();
+
+            }
+        }
+        else
+        {
+            ChangeModalDataAndShow(
+                "Invalid login credidentials.",
+                "Please inform both your Email and Password!",
+                "red"
+            );
+
+            StateHasChanged();
         }
         loginLoading = false;
     }
 
     private async void CreateRun()
     {
-        createRunLoading = false;
+        createRunLoading = true;
         if (loggedIn && club != null)
         {
             var runCoords = await JSRuntime.InvokeAsync<Coords>("GetRunCoords", "");
 
             run.Lat = runCoords.Lat;
             run.Lng = runCoords.Lng;
-            run.ClubId = club.Id;
+            run.ClubId = club.ClubData.Id;
 
-            var responseMessage = await runService.CreateRun(run, club);
+            var responseMessage = await runService.CreateRun(run, club.ClubData);
 
             if (responseMessage.StatusCode == HttpStatusCode.OK)
             {
-                await JSRuntime.InvokeVoidAsync("ResetFormDate", "");
-                run = new Run();
-                SetRunDateTimes();
+                //await JSRuntime.InvokeVoidAsync("ResetFormDate", "");
+                //run = new Run();
+                //SetRunDateTimes();
 
-                ModalTitle = "Run has been created";
-                ModalBody = "Your run has been created successfully!";
-                Modal.UpdateColor("green");
+                ChangeModalDataAndShow(
+                    "Run has been created", "" +
+                    "Your run has been created successfully!",
+                    "green"
+                );
             }
             else
             {
-                ModalTitle = "Error";
-                ModalBody = "Your run has not been created! Please try again.";
-                Modal.UpdateColor("red");
+                ChangeModalDataAndShow(
+                    "Error",
+                    "Your run has not been created! Please try again.",
+                    "red"
+                );
             }
         }
-        createRunLoading = true;
+        createRunLoading = false;
         Modal.Open();
+        StateHasChanged();
+
     }
 
     private void SetRunDateTimes()
@@ -161,10 +202,13 @@
         run.EndDateTime = run.StartDateTime.AddDays(1) + new TimeSpan(4, 30, 0); ;
     }
 
-    private class Coords
+    private void ChangeModalDataAndShow(string title, string body, string color)
     {
-        public double Lat { get; set; }
-        public double Lng { get; set; }
+        ModalTitle = title;
+        ModalBody = body;
+        Modal.UpdateColor(color);
+
+        Modal.Open();
     }
 
 }

@@ -25,7 +25,7 @@ namespace OrienteeringPlanner.Services
             _httpClient = httpClient;
         }
 
-        public async Task<Club> ClubLogin(LoginRequest loginRequest)
+        public async Task<ClubWithExtendedData> ClubLogin(LoginRequest loginRequest)
         {
             try
             {
@@ -36,7 +36,7 @@ namespace OrienteeringPlanner.Services
 
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return await response.Content.ReadAsAsync<Club>(new[] { new JsonMediaTypeFormatter() });
+                    return await response.Content.ReadAsAsync<ClubWithExtendedData>(new[] { new JsonMediaTypeFormatter() });
                 }
                 else
                 {
@@ -45,8 +45,7 @@ namespace OrienteeringPlanner.Services
             }
             catch (Exception ex)
             {
-
-                throw;
+                return null;
             }
         }
 
@@ -56,6 +55,30 @@ namespace OrienteeringPlanner.Services
             {
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "api/Clubs/ValidClubCredidentials");
                 request.Content = new StringContent(JsonConvert.SerializeObject(club), Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.SendAsync(request);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return await response.Content.ReadAsAsync<bool>(new[] { new JsonMediaTypeFormatter() });
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> ChangeClubPassword(ChangePasswordRequest requestData)
+        {
+            try
+            {
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "api/Clubs/ChangeClubPassword");
+                request.Content = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
 
                 var response = await _httpClient.SendAsync(request);
 
