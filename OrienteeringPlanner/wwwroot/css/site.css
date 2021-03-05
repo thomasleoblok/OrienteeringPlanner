@@ -17,10 +17,15 @@ a, .btn-link {
     border-color: #1861ac;
 }
 
+nav {
+    background-color: #303466;
+}
+
 app {
     position: relative;
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
 .top-row {
@@ -166,7 +171,7 @@ app {
 
 @media (min-width: 768px) {
     app {
-        flex-direction: row;
+        /*flex-direction: row;*/
     }
 
     .sidebar {
@@ -224,3 +229,4 @@ app {
     z-index: 1;
     background: #303466;
 }
+
