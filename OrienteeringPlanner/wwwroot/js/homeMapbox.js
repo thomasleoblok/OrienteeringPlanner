@@ -121,23 +121,24 @@ function RenderMapboxComponent(upcomingRuns) {
 
                         var start = e.features[0].properties.startDateTime;
                         var startDateTimeObject = new Date(start);
-                        var startDateTimeString =
-                            startDateTimeObject.getUTCFullYear() + "/" +
-                            ("0" + (startDateTimeObject.getUTCMonth() + 1)).slice(-2) + "/" +
-                            ("0" + startDateTimeObject.getUTCDate()).slice(-2) + " " +
-                            ("0" + startDateTimeObject.getUTCHours()).slice(-2) + ":" +
-                            ("0" + startDateTimeObject.getUTCMinutes()).slice(-2) + ":" +
-                            ("0" + startDateTimeObject.getUTCSeconds()).slice(-2);
+                        var startYear = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(startDateTimeObject);
+                        var startMonth = new Intl.DateTimeFormat('en', { month: 'short' }).format(startDateTimeObject);
+                        var startDay = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(startDateTimeObject);
+                        var startTime = ("0" + startDateTimeObject.getHours()).slice(-2) + ":" +
+                                        ("0" + startDateTimeObject.getMinutes()).slice(-2);
+
+                        var startDateTimeString = `${startDay}-${startMonth}-${startYear} ${startTime}`;
 
                         var end = e.features[0].properties.endDateTime;
                         var endDateTimeObject = new Date(end);
-                        var endDateTimeString =
-                            endDateTimeObject.getUTCFullYear() + "/" +
-                            ("0" + (endDateTimeObject.getUTCMonth() + 1)).slice(-2) + "/" +
-                            ("0" + endDateTimeObject.getUTCDate()).slice(-2) + " " +
-                            ("0" + endDateTimeObject.getUTCHours()).slice(-2) + ":" +
-                            ("0" + endDateTimeObject.getUTCMinutes()).slice(-2) + ":" +
-                            ("0" + endDateTimeObject.getUTCSeconds()).slice(-2);
+
+                        var endYear = new Intl.DateTimeFormat('en', { year: 'numeric' }).format(endDateTimeObject);
+                        var endMonth = new Intl.DateTimeFormat('en', { month: 'short' }).format(endDateTimeObject);
+                        var endDay = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(endDateTimeObject);
+                        var endTime = ("0" + endDateTimeObject.getHours()).slice(-2) + ":" +
+                                      ("0" + endDateTimeObject.getMinutes()).slice(-2);
+
+                        var endDateTimeString = `${endDay}-${endMonth}-${endYear} ${endTime}`;
 
                         var gotoLink = e.features[0].properties.gotoLink;
 

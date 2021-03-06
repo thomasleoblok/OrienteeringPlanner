@@ -52,6 +52,12 @@
             <div class="form-group">
                 <label for="RunInputName">Map name</label>
                 <InputText @bind-Value="run.Name" type="text" class="form-control" id="RunInputName" aria-describedby="nameHelp" placeholder="Enter name of map" requried />
+                @if (run.Name == null || run.Name.Length == 0)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        Please type in name of run
+                    </div>
+                }
             </div>
             <div class="row">
                 <div class="form-group col-12 col-sm-6">
@@ -66,6 +72,12 @@
             <div class="form-group">
                 <label for="RunInputGotoLink">Link to website/bulletin</label>
                 <InputText @bind-Value="run.GotoLink" type="text" class="form-control" id="RunInputGotoLink" aria-describedby="nameHelp" placeholder="Enter link to website or bulletin" requried />
+                @if (run.GotoLink == null || run.GotoLink.Length == 0)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        Please link to your website or bulletin
+                    </div>
+                }
             </div>
             <div id="createRunMap" style='width: 100%; height: 600px;' class="mb-5"></div>
             @if (!createRunLoading)
@@ -99,6 +111,8 @@
 
     protected override void OnInitialized()
     {
+        run.Name = "";
+        run.GotoLink = "";
         SetRunDateTimes();
 
     }
@@ -169,27 +183,30 @@
             run.Lng = runCoords.Lng;
             run.ClubId = club.ClubData.Id;
 
-            var responseMessage = await runService.CreateRun(run, club.ClubData);
-
-            if (responseMessage.StatusCode == HttpStatusCode.OK)
+            if (RunModelIsValid(run))
             {
-                //await JSRuntime.InvokeVoidAsync("ResetFormDate", "");
-                //run = new Run();
-                //SetRunDateTimes();
+                var responseMessage = await runService.CreateRun(run, club.ClubData);
 
-                ChangeModalDataAndShow(
-                    "Run has been created", "" +
-                    "Your run has been created successfully!",
-                    "green"
-                );
-            }
-            else
-            {
-                ChangeModalDataAndShow(
-                    "Error",
-                    "Your run has not been created! Please try again.",
-                    "red"
-                );
+                if (responseMessage.StatusCode == HttpStatusCode.OK)
+                {
+                    //await JSRuntime.InvokeVoidAsync("ResetFormDate", "");
+                    //run = new Run();
+                    //SetRunDateTimes();
+
+                    ChangeModalDataAndShow(
+                        "Run has been created", "" +
+                        "Your run has been created successfully!",
+                        "green"
+                    );
+                }
+                else
+                {
+                    ChangeModalDataAndShow(
+                        "Error",
+                        "Your run has not been created! Please try again.",
+                        "red"
+                    );
+                }
             }
         }
         createRunLoading = false;
@@ -200,8 +217,8 @@
 
     private void SetRunDateTimes()
     {
-        run.StartDateTime = DateTime.Today.AddDays(1) + new TimeSpan(10, 30, 0); // Tomorrow
-        run.EndDateTime = run.StartDateTime.AddDays(1) + new TimeSpan(4, 30, 0); ;
+        run.StartDateTime = DateTime.Today.AddDays(1) + new TimeSpan(10, 00, 0); // Tomorrow
+        run.EndDateTime = run.StartDateTime.AddDays(1) + new TimeSpan(5, 00, 0); ;
     }
 
     private void ChangeModalDataAndShow(string title, string body, string color)
@@ -211,6 +228,41 @@
         Modal.UpdateColor(color);
 
         Modal.Open();
+    }
+
+    private bool RunModelIsValid(Run newRun)
+    {
+        if (newRun.Lat == 0 && newRun.Lng == 0)
+        {
+            ChangeModalDataAndShow(
+                "Your run is lacking information",
+                "Your run cannot be created! You are missing a location. Please click on the map to choose a location or search for the location in the input-field.",
+                "red"
+            );
+            return false;
+        }
+        else if (string.IsNullOrEmpty(newRun.Name))
+        {
+            ChangeModalDataAndShow(
+                "Your run is lacking information",
+                "Your run cannot be created! You are missing a name. Please type in the name of the run in the input-field.",
+                "red"
+            );
+            return false;
+        }
+        else if (string.IsNullOrEmpty(newRun.GotoLink))
+        {
+            ChangeModalDataAndShow(
+                "Your run is lacking information",
+                "Your run cannot be created! You are missing a link to your website. Please type in the web-address to the website or bulletin for the run in the input-field.",
+                "red"
+            );
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
 }

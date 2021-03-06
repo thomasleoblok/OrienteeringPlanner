@@ -31,7 +31,7 @@ namespace OrienteeringPlanner.Controllers
             var today = DateTime.Now;
             var searchSpanDate = today.AddDays(searchDaysAhead);
 
-            var upcomingRuns = await _context.Run.Where(run => run.StartDateTime > today && run.StartDateTime < searchSpanDate).ToListAsync();
+            var upcomingRuns = await _context.Run.Where(run => run.EndDateTime > today && run.StartDateTime < searchSpanDate).ToListAsync();
 
             return upcomingRuns;
         }
