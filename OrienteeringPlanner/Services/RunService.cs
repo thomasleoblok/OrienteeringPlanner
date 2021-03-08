@@ -11,6 +11,10 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using System.Text;
+using System.Net;
+using System.Net.Http.Formatting;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -44,11 +48,52 @@ namespace OrienteeringPlanner.Services
             }
             else
             {
-                responseMessage.StatusCode = (System.Net.HttpStatusCode)500;
+                responseMessage.StatusCode = (HttpStatusCode)500;
             }
 
             return responseMessage;
+        }
 
+        public async Task<IEnumerable<Run>> GetUpcomingRunsForClub(Club club)
+        {
+            try
+            {
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "api/Runs/GetUpcomingRunsForClub");
+                request.Content = new StringContent(JsonConvert.SerializeObject(club), Encoding.UTF8, "application/json");
+
+                var response = await _httpClient.SendAsync(request);
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    return await response.Content.ReadAsAsync<IEnumerable<Run>>(new[] { new JsonMediaTypeFormatter() });
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<HttpResponseMessage> DeleteRun(Run run, Club club)
+        {
+            HttpResponseMessage responseMessage = new HttpResponseMessage();
+
+            var isValidClub = await _clubService.ValidClubCredidentials(club);
+
+            if (isValidClub)
+            {
+                responseMessage = await _httpClient.PostAsJsonAsync("api/runs/DeleteRun", run);
+            }
+            else
+            {
+                responseMessage.StatusCode = (HttpStatusCode)500;
+            }
+
+            return responseMessage;
         }
 
     }

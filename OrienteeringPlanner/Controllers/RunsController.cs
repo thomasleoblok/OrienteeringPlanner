@@ -36,6 +36,35 @@ namespace OrienteeringPlanner.Controllers
             return upcomingRuns;
         }
 
+        // GET: api/Runs/GetUpcomingRuns
+        [HttpGet("GetUpcomingRunsForClub")]
+        public async Task<ActionResult<IEnumerable<Run>>> GetUpcomingRunsForClub(Club club)
+        {
+            try
+            {
+                var dbClub = await _context.Club.FindAsync(club.Id);
+
+                if (dbClub.Token == club.Token)
+                {
+                    var today = DateTime.Now;
+
+                    var upcomingRuns = await _context.Run.Where(run => run.EndDateTime > today && run.ClubId == dbClub.Id).ToListAsync();
+
+                    return upcomingRuns;
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+
+        }
+
         // GET api/<RunsController>/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Run>> GetRun(int runId)
@@ -60,10 +89,35 @@ namespace OrienteeringPlanner.Controllers
         {
         }
 
-        // DELETE api/<RunsController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpPost("DeleteRun")]
+        public async Task<ActionResult> Delete(Run run)
         {
+            try
+            {
+                var dbRun = await _context.Run.FindAsync(run.Id);
+
+                if (dbRun == null)
+                {
+                    return NotFound();
+                }
+
+                if (run.ClubId == dbRun.ClubId)
+                {
+                    _context.Run.Remove(dbRun);
+                    await _context.SaveChangesAsync();
+
+                    return Ok();
+                }
+                else 
+                {
+                    return NotFound();
+                }
+
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
         }
     }
 }

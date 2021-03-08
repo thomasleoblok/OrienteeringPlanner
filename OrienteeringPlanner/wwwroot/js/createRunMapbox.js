@@ -3,6 +3,7 @@
     lng: 0.0
 }
 
+
 function RenderCreateRunMapboxComponent() {
     var elementExists = document.getElementById("createRunMap");
 
