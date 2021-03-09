@@ -67,7 +67,7 @@
                                 <ValidationSummary />
                                 <div class="form-group">
                                     <label for="RunInputName">Map name</label>
-                                    <InputText @bind-Value="run.Name" type="text" class="form-control" id="RunInputName" aria-describedby="nameHelp" placeholder="Enter name of map" requried />
+                                    <InputText @bind-Value="run.Name" type="text" class="form-control" id="RunInputName" aria-describedby="nameHelp" placeholder="Enter name of run" requried />
                                     @if (run.Name == null || run.Name.Length == 0)
                                     {
                                         <div class="alert alert-danger" role="alert">
@@ -120,8 +120,8 @@
                                             <td></td>
                                             <td></td>
                                             <th scope="col">Name</th>
-                                            <th scope="col">Latitude</th>
-                                            <th scope="col">Longitude</th>
+                                            <th scope="col">Start Date</th>
+                                            <th scope="col">End Date</th>
                                             <th scope="col">Website/Bulletin Link</th>
                                         </tr>
                                     </thead>
@@ -131,10 +131,10 @@
                                         <tr>
                                             <td style="color: green; cursor:pointer;" @onclick="() => EditRun(r)">Edit</td>
                                             <td style="color: red; cursor:pointer;" @onclick="() => DeleteRun(r)">Delete</td>
-                                            <th scope="row">@r.Name</th>
-                                            <td>@r.Lat</td>
-                                            <td>@r.Lng</td>
-                                            <td><a>@r.GotoLink</a></td>
+                                            <th scope="row"><input type="text" class="form-control" placeholder="Enter name of run" @bind="@r.Name" /></th>
+                                            <td><input @bind:format="yyyy-MM-ddTHH:mm" type="datetime-local" class="form-control" placeholder="Start date and time for run" @bind="@r.StartDateTime" /></td>
+                                            <td><input @bind:format="yyyy-MM-ddTHH:mm" type="datetime-local" class="form-control" placeholder="End date and time for run" @bind="@r.EndDateTime" /></td>
+                                            <td><input type="text" class="form-control" placeholder="Enter link to website or bulletin" @bind="@r.GotoLink" /></td>
                                         </tr>
 
                                         }
@@ -360,18 +360,21 @@
 
     private async void EditRun(Run r)
     {
-        //var responseMessage = await runService.DeleteRun(r, club.ClubData);
+        if (RunModelIsValid(run))
+        {
+            var responseMessage = await runService.EditRun(r, club.ClubData);
 
-        //if (responseMessage.StatusCode == HttpStatusCode.OK)
-        //{
-        //    ChangeModalDataAndShow("Run has been Edited", "Your run has been edited successfully!", "green");
-        //    GetUpcomingRunsForClubAsync();
-        //}
-        //else
-        //{
-        //    ChangeModalDataAndShow("Error", "Error when trying to edit run. Please try again!", "red");
-        //}
-        //Modal.Open();
+            if (responseMessage.StatusCode == HttpStatusCode.OK)
+            {
+                ChangeModalDataAndShow("Run has been Edited", "Your run has been edited successfully!", "green");
+                GetUpcomingRunsForClubAsync();
+            }
+            else
+            {
+                ChangeModalDataAndShow("Error", "Error when trying to edit run. Please try again!", "red");
+            }
+        }
+        Modal.Open();
     }
 
     private async void RenderMap()

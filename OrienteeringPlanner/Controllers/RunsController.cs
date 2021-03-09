@@ -83,10 +83,28 @@ namespace OrienteeringPlanner.Controllers
 
         }
 
-        // PUT api/<RunsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("EditRun")]
+        public async Task<ActionResult> EditRun(Run run)
         {
+            _context.Entry(run).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!RunExists(run.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         [HttpPost("DeleteRun")]
@@ -118,6 +136,11 @@ namespace OrienteeringPlanner.Controllers
             {
                 return NotFound();
             }
+        }
+
+        private bool RunExists(int id)
+        {
+            return _context.Run.Any(r => r.Id == id);
         }
     }
 }

@@ -96,5 +96,23 @@ namespace OrienteeringPlanner.Services
             return responseMessage;
         }
 
+        public async Task<HttpResponseMessage> EditRun(Run run, Club club)
+        {
+            HttpResponseMessage responseMessage = new HttpResponseMessage();
+
+            var isValidClub = await _clubService.ValidClubCredidentials(club);
+
+            if (isValidClub)
+            {
+                responseMessage = await _httpClient.PutAsJsonAsync("api/runs/EditRun", run);
+            }
+            else
+            {
+                responseMessage.StatusCode = (HttpStatusCode)500;
+            }
+
+            return responseMessage;
+        }
+
     }
 }

@@ -14,6 +14,7 @@ namespace OrienteeringPlanner.Services
         Task<HttpResponseMessage> CreateRun(Run run, Club club);
         Task<IEnumerable<Run>> GetUpcomingRunsForClub(Club club);
         Task<HttpResponseMessage> DeleteRun(Run run, Club club);
+        Task<HttpResponseMessage> EditRun(Run run, Club club);
 
     }
 }
