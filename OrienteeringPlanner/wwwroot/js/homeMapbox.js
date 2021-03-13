@@ -5,8 +5,6 @@ function RenderMapboxComponent(upcomingRuns) {
     var elementExists = document.getElementById("map");
 
     if (elementExists) {
-
-
         var upcomingRunsGeoJson = upcomingRunsToGeoJson(upcomingRuns);
 
         var map = new mapboxgl.Map({
@@ -205,13 +203,13 @@ function getWidth() {
 
 function getZoom() {
     if (getWidth() < 500)
-        return 4.8;
+        return 4.6;
     else if (getWidth() < 550)
-        return 5.0;
+        return 4.8;
     else if (getWidth() < 570)
-        return 5.2;
+        return 5.0;
     else
-        return 6.7;
+        return 6.5;
 }
 
 function getLngLat() {

@@ -95,7 +95,7 @@
                                         </div>
                                     }
                                 </div>
-                                <div onload="RenderCreateRunMapboxComponent()" id="createRunMap" style='width: 100%; height: 600px;' class="mb-5"></div>
+                                <div id="createRunMap" style='width: 100%; height: 600px;' class="mb-5"></div>
                                 @if (!createRunLoading)
                                 {
                                     <button type="submit" class="btn btn-info">Create Run</button>
@@ -328,6 +328,10 @@
         {
             GetUpcomingRunsForClubAsync();
         }
+        else if(newState == LoggedInState.CreateRun)
+        {
+            RenderMap();
+        }
     }
 
     private async void GetUpcomingRunsForClubAsync()
@@ -355,12 +359,13 @@
         {
             ChangeModalDataAndShow("Error", "Error when trying to delete run. Please try again!", "red");
         }
+        Modal.HideChangePasswordForm();
         Modal.Open();
     }
 
     private async void EditRun(Run r)
     {
-        if (RunModelIsValid(run))
+        if (RunModelIsValid(r))
         {
             var responseMessage = await runService.EditRun(r, club.ClubData);
 
@@ -374,6 +379,8 @@
                 ChangeModalDataAndShow("Error", "Error when trying to edit run. Please try again!", "red");
             }
         }
+        Modal.HideChangePasswordForm();
+
         Modal.Open();
     }
 
@@ -381,7 +388,7 @@
     {
         StateHasChanged();
         await JSRuntime.InvokeVoidAsync("RenderCreateRunMapboxComponent", "");
-        StateHasChanged();
+        //StateHasChanged();
     }
 
     private enum LoggedInState
