@@ -126,7 +126,7 @@ namespace OrienteeringPlanner.Controllers
 
                     return Ok();
                 }
-                else 
+                else
                 {
                     return NotFound();
                 }
@@ -136,6 +136,34 @@ namespace OrienteeringPlanner.Controllers
             {
                 return NotFound();
             }
+        }
+
+        [HttpGet("UpdateCount/{id}")]
+        public async Task<ActionResult<bool>> UpdateCount(int id)
+        {
+            try
+            {
+                var run = await _context.Run.FindAsync(id);
+
+                if (run != null)
+                {
+                    run.Count++;
+                    _context.Entry(run).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
         }
 
         private bool RunExists(int id)

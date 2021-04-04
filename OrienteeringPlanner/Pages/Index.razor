@@ -42,4 +42,19 @@
         await JSRuntime.InvokeVoidAsync("RenderMapboxComponent", upcomingRuns);
     }
 
+    [JSInvokable]
+    public static async void UpdateCount(int id)
+    {
+        try
+        {
+            //var serv = new RunService();
+            //var response = await runService.UpdateCount(id);
+        }
+        catch (Exception)
+        {
+
+            throw;
+        }
+    }
+
 }

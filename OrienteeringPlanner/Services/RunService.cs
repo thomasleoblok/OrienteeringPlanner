@@ -113,6 +113,5 @@ namespace OrienteeringPlanner.Services
 
             return responseMessage;
         }
-
     }
 }

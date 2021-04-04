@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OrienteeringPlanner.Data;
 
 namespace OrienteeringPlanner.Migrations
 {
     [DbContext(typeof(OrienteeringPlannerContext))]
-    partial class OrienteeringPlannerContextModelSnapshot : ModelSnapshot
+    [Migration("20210323192300_RunCounter")]
+    partial class RunCounter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

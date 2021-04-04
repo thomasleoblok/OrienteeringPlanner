@@ -14,5 +14,6 @@ namespace OrienteeringPlanner.Models
         public DateTime EndDateTime { get; set; }
         public string GotoLink { get; set; }
         public int ClubId { get; set; }
+        public int Count { get; set; }
     }
 }

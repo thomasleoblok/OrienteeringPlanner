@@ -116,6 +116,7 @@ function RenderMapboxComponent(upcomingRuns) {
                     map.on('click', 'unclustered-point', function (e) {
                         var coordinates = e.features[0].geometry.coordinates.slice();
                         var name = e.features[0].properties.name;
+                        var id = e.features[0].properties.id;
 
                         var start = e.features[0].properties.startDateTime;
                         var startDateTimeObject = new Date(start);
@@ -151,7 +152,7 @@ function RenderMapboxComponent(upcomingRuns) {
                             .setLngLat(coordinates)
                             .setHTML(
                                 '<div class="popUpBox"><b>' + name + '</b><br>Starts at: ' + startDateTimeString + '<br>Ends at: ' + endDateTimeString + '<br>' +
-                                '<a href="' + gotoLink + '" target="_blank">Check it out!</a></div>'
+                                '<a onclick="jsFunctions.UpdateCount(' + id + ')" href="' + gotoLink + '" target="_blank">Check it out!</a></div>'
                             )
                             .addTo(map);
                     });
@@ -222,3 +223,11 @@ function getLngLat() {
     else
         return [10.5509733, 56.41];
 }
+
+window.jsFunctions = {
+    UpdateCount: function (id) {
+        fetch('api/runs/UpdateCount/' + id).then(response => {
+
+        });
+    }
+};
